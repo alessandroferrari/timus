@@ -7,14 +7,23 @@ Memory limit: 64 MB
 In the present world you frequently meet a lot of call numbers and they are going to be longer and longer. You need to remember such a kind of numbers. One method to do it in an easy way is to assign letters to digits as shown in the following picture:
 
 1 ij
+
 2 abc
+
 3 def
+
 4 gh
+
 5 kl
+
 6 mn
+
 7 prs
+
 8 tuv
+
 9 wxy
+
 0 oqz
 
 This way every word or a group of words can be assigned a unique number, so you can remember words instead of call numbers. It is evident that it has its own charm if it is possible to find some simple relationship between the word and the person itself. So you can learn that the call number 941837296 of a chess playing friend of yours can be read as WHITEPAWN, and the call number 2855304 of your favourite teacher is read BULLDOG.
@@ -33,24 +42,39 @@ Sample
 input	
 
 7325189087
+
 5
+
 it
+
 your
+
 reality
+
 real
+
 our
+
 4294967296
+
 5
+
 it
+
 your
+
 reality
+
 real
+
 our
+
 -1
 
 output
 
 reality our
+
 No solution.
 
 Problem Source: Central European Olympiad in Informatics 1999
