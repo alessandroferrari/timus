@@ -3,7 +3,7 @@ Solution to timus Problem-1003: Parity.
 
 Alessandro Ferrari 
 
-This solution aces all the tests that I have prepared but get WA on timus.
+This solution aces all tests (not passing tests2)  that I have prepared but get WA on timus.
 Not clear why.
 */
 

@@ -4,6 +4,7 @@ Solution to timus Problem-1003: Parity.
 Alessandro Ferrari 
 
 This solution get TLE.
+Passes all tests and tests2.
 */
 
 #include <iostream>

@@ -3,7 +3,7 @@ Solution to timus Problem-1003: Parity.
 
 Alessandro Ferrari 
 
-This solution gets ME.
+This solution gets ME. Passes tests. Not passes tests2.
 */
 
 #include <iostream>
