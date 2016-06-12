@@ -3,7 +3,10 @@ Solution to timus Problem-1003: Parity.
 
 Alessandro Ferrari 
 
-This solution get TLE.
+Solution based on sorted array-lists that allows fast research of the intervals, 
+both by begin and end of the interval.
+
+This solution get TLE. Probably because the insertion operation in the vector are too slow.
 Passes all tests and tests2.
 */
 

@@ -3,7 +3,10 @@ Solution to timus Problem-1003: Parity.
 
 Alessandro Ferrari 
 
-This solution gets ME. Passes tests. Not passes tests2.
+Hashmap of a hashmap, for indexing intervals by begin and end.
+
+This solution gets ME. Probably too much overhead for the data structures. 
+Passes tests. Not passes tests2.
 */
 
 #include <iostream>

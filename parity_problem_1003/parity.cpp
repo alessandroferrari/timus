@@ -3,8 +3,13 @@ Solution to timus Problem-1003: Parity.
 
 Alessandro Ferrari 
 
-This solution aces all tests (not passing tests2)  that I have prepared but get WA on timus.
-Not clear why.
+Solution based on disjoint sets (quick union-find) and on ah hashable set.
+
+This solution aces all tests that I have prepared but get Runtime error on timus, 
+due to the size of the array to allocate.
+Potentially the input sequence can be of a trillion.
+
+I should think at something keener.
 */
 
 #include <iostream>
@@ -94,6 +99,14 @@ bool coherence(interval_int evens[], interval_int odds[], interval& new_interval
         if(odds[new_interval.a-1]!=-1 and odds[new_interval.b]!=-1){
             //condition for oddity is that find(evens,odds[a-1])!=find(evens,odd[b])
             tmp1 = find(evens,odds[new_interval.b])==find(evens,odds[new_interval.a-1]);
+            interval_int parent_odd_a_1 = find(evens,odds[new_interval.a-1]);
+            interval_int parent_a_1 = find(evens,new_interval.a-1);
+            interval_int parent_odd_b = find(evens,odds[new_interval.b]);
+            interval_int parent_b = find(evens,new_interval.b);
+            if(parent_odd_b==parent_a_1 and parent_odd_a_1==parent_b)
+                tmp1 = parent_odd_a_1==parent_odd_b;
+            else
+                tmp1 = true;
         }else{
             tmp1 = true;
         }
@@ -124,8 +137,8 @@ bool add_interval(interval_int evens[], interval_int odds[], int count[], interv
         //join a new even interval
         quick_union(evens,count,new_interval.a-1,new_interval.b);
         //and eventually spread oddity 
-        if(odds[new_interval.a-1]!=-1) odds[new_interval.b] = odds[new_interval.a-1];
-        if(odds[new_interval.b]!=-1) odds[new_interval.a-1] = odds[new_interval.b];
+        if(odds[new_interval.a-1]!=-1 and odds[new_interval.b]==-1) odds[new_interval.b] = odds[new_interval.a-1];
+        if(odds[new_interval.b]!=-1 and odds[new_interval.a-1]==-1) odds[new_interval.a-1] = odds[new_interval.b];
     }else{
         parent_a_1 = find(evens, new_interval.a-1);
         parent_b = find(evens, new_interval.b);
@@ -167,7 +180,7 @@ int main(){
 
     while(read_sequence_length(cin,sequence_len)){
         check_list.clear();
-        if(sequence_len>10000) sequence_len = 10000;
+        //if(sequence_len>10000) sequence_len = 10000;
         evens = new interval_int[sequence_len+1];
         for(interval_int i=0; i<sequence_len+1 ; i++) evens[i]=i; 
         odds = new interval_int[sequence_len+1];
@@ -177,10 +190,10 @@ int main(){
         bool not_absurd = true;
         cin >> pairs_number;
         //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        if(sequence_len==10 and pairs_number==3){
+        /*if(sequence_len==10 and pairs_number==3){
             //cout << "do it" << endl;
             pairs_number = 4;
-        }
+        }*/
         conditions_counter = 0;
         for(int i = 0; i<pairs_number; i++){
             interval cur_interval;            
@@ -198,7 +211,7 @@ int main(){
                 for(int i=1;i<sequence_len+1;i++) cout << "," << evens[i]; 
                 cout << "]" << endl;
                 cout << "Odds: [" << odds[0];
-                for(int i=1;i<sequence_len+1;i++) cout << "," << odds[i];
+                for(int i=1;i<sequence_len+1;i++) cout << "," << i << ":" << odds[i];
                 cout << "]" << endl;*/
                 if(not_absurd) conditions_counter++;
             }
