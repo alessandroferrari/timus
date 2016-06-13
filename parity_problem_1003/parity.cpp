@@ -161,7 +161,8 @@ bool coherence(evens_map& evens, odds_map& odds, interval& new_interval){
     bool tmp1, tmp2;
     if(new_interval.even){
         if(odds[new_interval.a-1]!=-1 and odds[new_interval.b]!=-1){
-            //condition for oddity is that find(evens,odds[a-1])!=find(evens,odd[b])
+            //condition for oddity is that find(evens,odds[a-1])!=find(evens,odd[b]),
+            //only if find(evens,odds[a-1])==find(evens,b) and find(evens,odds[b])==find(evens,a-1)
             tmp1 = find(evens,odds[new_interval.b])==find(evens,odds[new_interval.a-1]);
             interval_int parent_odd_a_1 = find(evens,odds[new_interval.a-1]);
             interval_int parent_a_1 = find(evens,new_interval.a-1);
