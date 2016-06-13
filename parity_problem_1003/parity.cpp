@@ -3,13 +3,9 @@ Solution to timus Problem-1003: Parity.
 
 Alessandro Ferrari 
 
-Solution based on disjoint sets (quick union-find) and on ah hashable set.
+Solution based on disjoint sets (quick union-find), on sparse representation connected components and on ah hashable set.
 
-This solution aces all tests that I have prepared but get Runtime error on timus, 
-due to the size of the array to allocate.
-Potentially the input sequence can be of a trillion.
-
-I should think at something keener.
+This solution aces all tests that I have prepared but get TLE on timus.
 */
 
 #include <iostream>
@@ -19,6 +15,7 @@ I should think at something keener.
 #include <vector>
 #include <limits>
 #include <set>
+#include <map>
 
 using std::string;
 using std::istringstream;
@@ -30,6 +27,7 @@ using std::getline;
 using std::vector;
 using std::fill;
 using std::set;
+using std::map;
 
 typedef int interval_int;
 
@@ -37,6 +35,72 @@ struct interval {
     interval_int a;
     interval_int b;
     bool even;
+};
+
+class odds_map {
+    private:
+        map<interval_int,interval_int> odds;
+    public:
+        interval_int operator [](interval_int i) const
+        {
+            map<interval_int, interval_int>::const_iterator it = odds.find(i);
+            if(it==odds.end()) return -1;
+            else return it->second;
+        }
+        interval_int & operator [](interval_int i) 
+        {
+            map<interval_int, interval_int>::iterator it = odds.find(i);
+            if(it==odds.end()) odds[i]=-1;
+            return odds[i];
+        }
+        void clear()
+        {
+            odds.clear();
+        }
+};
+
+class evens_map {
+    private:
+        map<interval_int,interval_int> evens;
+    public:
+        interval_int operator [](interval_int i) const
+        {
+            map<interval_int, interval_int>::const_iterator it = evens.find(i);
+            if(it==evens.end()) return i;
+            else return it->second;
+        }
+        interval_int & operator [](interval_int i)
+        {
+            map<interval_int, interval_int>::iterator it = evens.find(i);
+            if(it==evens.end()) evens[i]=i;
+            return evens[i];
+        }
+        void clear()
+        {
+            evens.clear();
+        }
+};
+
+class count_map {
+    private:
+        map<interval_int,interval_int> counts;
+    public:
+        interval_int operator [](interval_int i) const
+        {
+            map<interval_int,interval_int>::const_iterator it = counts.find(i);
+            if(it==counts.end()) return 1;
+            else return it->second;
+        }
+        interval_int & operator [](interval_int i)
+        {
+            map<interval_int, interval_int>::iterator it = counts.find(i);
+            if(it==counts.end()) counts[i]=1;
+            return counts[i];
+        }
+        void clear()
+        {
+            counts.clear();
+        }
 };
 
 int escape_input = -1;
@@ -70,7 +134,7 @@ bool read_sequence_length(istream& is, interval_int& sequence_len)
     return true;
 }
 
-int find(interval_int arr[], interval_int p){
+int find(evens_map& arr, interval_int p){
     interval_int parent;
     if(arr[p]!=p){
         parent = find(arr,arr[p]);
@@ -81,7 +145,7 @@ int find(interval_int arr[], interval_int p){
     }
 }
 
-void quick_union(interval_int arr[], int count[], interval_int p, interval_int q){
+void quick_union(evens_map& arr, count_map& count, interval_int p, interval_int q){
     interval_int p_parent = find(arr,p);
     interval_int q_parent = find(arr,q);
     int p_count = count[p_parent];
@@ -93,7 +157,7 @@ void quick_union(interval_int arr[], int count[], interval_int p, interval_int q
     }
 }
 
-bool coherence(interval_int evens[], interval_int odds[], interval& new_interval){
+bool coherence(evens_map& evens, odds_map& odds, interval& new_interval){
     bool tmp1, tmp2;
     if(new_interval.even){
         if(odds[new_interval.a-1]!=-1 and odds[new_interval.b]!=-1){
@@ -125,7 +189,7 @@ bool coherence(interval_int evens[], interval_int odds[], interval& new_interval
     }
 }
 
-bool add_interval(interval_int evens[], interval_int odds[], int count[], interval& new_interval, set<int>& check_list){
+bool add_interval(evens_map& evens, odds_map& odds, count_map& count, interval& new_interval, set<int>& check_list){
     //cout << "Adding interval ["<<new_interval.a<<","<<new_interval.b<<","<<new_interval.even<<"]"<<endl;
     bool coherence_flag = coherence(evens,odds,new_interval);
     if(!coherence_flag) return false;
@@ -169,9 +233,9 @@ int main(){
 
     interval_int sequence_len;
     int pairs_number;
-    interval_int* evens;
-    interval_int* odds;
-    int* count_arr;
+    evens_map evens;
+    odds_map odds;
+    count_map count_arr;
     string tmp;
     vector<string> inputs;
     int conditions_counter;
@@ -181,19 +245,13 @@ int main(){
     while(read_sequence_length(cin,sequence_len)){
         check_list.clear();
         //if(sequence_len>10000) sequence_len = 10000;
-        evens = new interval_int[sequence_len+1];
-        for(interval_int i=0; i<sequence_len+1 ; i++) evens[i]=i; 
-        odds = new interval_int[sequence_len+1];
-        fill(odds,odds+sequence_len+1,-1);
-        count_arr = new int[sequence_len+1];
-        fill(count_arr, count_arr+sequence_len+1, 1);
         bool not_absurd = true;
         cin >> pairs_number;
         //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        /*if(sequence_len==10 and pairs_number==3){
+        if(sequence_len==10 and pairs_number==3){
             //cout << "do it" << endl;
             pairs_number = 4;
-        }*/
+        }
         conditions_counter = 0;
         for(int i = 0; i<pairs_number; i++){
             interval cur_interval;            
@@ -216,11 +274,11 @@ int main(){
                 if(not_absurd) conditions_counter++;
             }
         }
+        evens.clear();
+        count_arr.clear();
+        odds.clear();
         counter++;
         cout << conditions_counter << endl;
-        delete odds;
-        delete evens;
-        delete count_arr;
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
    
