@@ -160,22 +160,23 @@ void quick_union(evens_map& arr, count_map& count, interval_int p, interval_int 
 bool coherence(evens_map& evens, odds_map& odds, interval& new_interval){
     bool tmp1, tmp2;
     if(new_interval.even){
-        if(odds[new_interval.a-1]!=-1 and odds[new_interval.b]!=-1){
-            //condition for oddity is that find(evens,odds[a-1])!=find(evens,odd[b]),
-            //only if find(evens,odds[a-1])==find(evens,b) and find(evens,odds[b])==find(evens,a-1)
-            tmp1 = find(evens,odds[new_interval.b])==find(evens,odds[new_interval.a-1]);
-            interval_int parent_odd_a_1 = find(evens,odds[new_interval.a-1]);
-            interval_int parent_a_1 = find(evens,new_interval.a-1);
-            interval_int parent_odd_b = find(evens,odds[new_interval.b]);
-            interval_int parent_b = find(evens,new_interval.b);
-            if(parent_odd_b==parent_a_1 and parent_odd_a_1==parent_b)
-                tmp1 = parent_odd_a_1==parent_odd_b;
-            else
-                tmp1 = true;
-        }else{
-            tmp1 = true;
+        interval_int odds_a_1 = odds[new_interval.a-1];
+        interval_int odds_b = odds[new_interval.b];
+        interval_int parent_odd_a_1, parent_a_1, parent_odd_b, parent_b;
+        //negation of the conditions for eveness...
+        if(odds_a_1!=-1){
+            parent_b = find(evens,new_interval.b);
+            parent_a_1 = find(evens,new_interval.a-1);
+            parent_odd_a_1 = find(evens,odds_a_1);
+            if(parent_odd_a_1==parent_b and parent_a_1!=parent_b) return false;
         }
-        return tmp1;
+        if(odds_b!=-1){
+            parent_b = find(evens,new_interval.b);
+            parent_a_1 = find(evens,new_interval.a-1);
+            parent_odd_b = find(evens,odds_b);
+            if(parent_odd_b==parent_a_1 and parent_a_1!=parent_b) return false;
+        }
+        return true;
     }else{
         //condition for parity is that find(evens,a-1)==find(evens,b)
         tmp1 = find(evens,new_interval.a-1) != find(evens,new_interval.b); 
@@ -213,18 +214,11 @@ bool add_interval(evens_map& evens, odds_map& odds, count_map& count, interval& 
         }else{
             odds[new_interval.a-1] = parent_b;
         }    
-        //extend oddity on the neighbor even intervals
-        for(set<interval_int>::const_iterator it=check_list.begin();it!=check_list.end();it++){
-            if(find(evens,*it)==parent_a_1) odds[*it] = parent_b;
-        }
         //same fot the right half
         if(odds[new_interval.b]!=-1){
             quick_union(evens,count,odds[new_interval.b],new_interval.a-1);
         }else{
             odds[new_interval.b] = parent_a_1;
-        }
-        for(set<interval_int>::const_iterator it = check_list.begin();it != check_list.end(); it++){
-            if(find(evens,*it)==parent_b) odds[*it] = parent_a_1; 
         }
     }
     return coherence(evens,odds,new_interval);
