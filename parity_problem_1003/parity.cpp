@@ -5,7 +5,7 @@ Alessandro Ferrari
 
 Solution based on disjoint sets (quick union-find), on sparse representation connected components and on ah hashable set.
 
-This solution aces all tests that I have prepared but get TLE on timus.
+This solution aces all tests that I have prepared and get AC on timus.
 */
 
 #include <iostream>
