@@ -155,7 +155,7 @@ class Graph {
 };
 
 template<typename Dtype, typename Ctype>
-class D {
+class DFS {
  public:
    DFS(const Graph<Dtype,Ctype>& _g, Dtype& _start, Dtype& _end) {
      g = &_g;
